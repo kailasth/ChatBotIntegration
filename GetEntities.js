@@ -20,6 +20,17 @@ const getInactiveChatsUrl =
 const getChatMessagesUrl =
   'https://api.boldchat.com/aid/730051643012624573/data/rest/json/v1/getChatMessages?auth=';
 
+function formatDate(date) {
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0' + minutes : minutes;
+  var strTime = hours + ':' + minutes + ' ' + ampm;
+  return date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + '  ' + strTime;
+}
+
 const sendMessage = (callback, message) => {
   const chatsQueryEntity = nano.createEntity({
     kind: ENTITY.ENTITY,
@@ -34,14 +45,14 @@ const sendMessage = (callback, message) => {
   nano.sendGetEntityResult(callback, [chatsQueryEntity]);
 };
 
-const sendTechnicalErrorMessage = callback => {
+const sendTechnicalErrorMessage = (callback, id) => {
   const chatsQueryEntity = nano.createEntity({
     kind: ENTITY.ENTITY,
     type: 'text',
     lifecycle: 'statement',
     value: 'Technical Error',
     properties: {
-      CHATVALUE: 'We are currently facing some technical difficulties. Please try again later.'
+      CHATVALUE: 'We are currently facing some technical difficulties. Please try again later.' + id
     }
   });
 
@@ -77,7 +88,7 @@ const getFolders = (callback, request) => {
         try {
           responseData = JSON.parse(responseData);
         } catch (err) {
-          sendTechnicalErrorMessage(callback);
+          sendTechnicalErrorMessage(callback, 1);
           reject();
           return;
         }
@@ -87,7 +98,7 @@ const getFolders = (callback, request) => {
           responseData.Data[0] &&
           responseData.Data[0].FolderID;
         if (folderID === undefined) {
-          sendTechnicalErrorMessage(callback);
+          sendTechnicalErrorMessage(callback, 2);
           reject();
           return;
         } else {
@@ -99,6 +110,7 @@ const getFolders = (callback, request) => {
 };
 
 const getInactiveChats = (callback, request) => {
+  var chats = [];
   return new Promise((resolve, reject) => {
     https.get(getInactiveChatsUrl + request.hash + '&FolderID=' + request.folderID, res => {
       let responseData = '';
@@ -109,7 +121,7 @@ const getInactiveChats = (callback, request) => {
         try {
           responseData = JSON.parse(responseData);
         } catch (err) {
-          sendTechnicalErrorMessage(callback);
+          sendTechnicalErrorMessage(callback, 3);
           reject();
           return;
         }
@@ -119,9 +131,12 @@ const getInactiveChats = (callback, request) => {
             responseData.Data[i].CustomFields['Employee ID'] !== undefined &&
             responseData.Data[i].CustomFields['Employee ID'] === request.employeeId
           ) {
-            resolve({ chatId: responseData.Data[i].ChatID });
-            return;
+            chats.push(responseData.Data[i].ChatID);
           }
+        }
+        if (chats.length) {
+          resolve(chats);
+          return;
         }
         sendMessage(
           callback,
@@ -136,45 +151,80 @@ const getInactiveChats = (callback, request) => {
 
 const getChatMessages = (callback, request) => {
   return new Promise((resolve, reject) => {
-    https.get(getChatMessagesUrl + request.hash + '&ChatID=' + request.chatId, res => {
-      let responseData = '';
-      res.on('data', response => {
-        responseData += response;
+    var chatIds = request.chatIds;
+    // var responseDataFinal = {
+    //   Data : []
+    // };
+    var promises = [];
+    const getChatMessagesForId = chatId => {
+      return new Promise((resolve, reject) => {
+        https.get(getChatMessagesUrl + request.hash + '&ChatID=' + chatId, res => {
+          let responseData = '';
+          res.on('data', response => {
+            responseData += response;
+          });
+          res.on('end', () => {
+            try {
+              responseData = JSON.parse(responseData);
+            } catch (err) {
+              reject(err);
+              return;
+            }
+            if (responseData && responseData.Status === 'error') {
+              reject('Error');
+              return;
+            }
+            resolve(responseData.Data);
+            return;
+          });
+        });
       });
-      res.on('end', () => {
-        try {
-          responseData = JSON.parse(responseData);
-        } catch (err) {
-          sendTechnicalErrorMessage(callback);
-          reject();
-          return;
-        }
-        if (responseData && responseData.Status === 'error') {
-          sendMessage(callback, 'We could not find any chats for the given id.');
-          resolve();
-          return;
-        }
-        let responseHtml = `The messages for employeeId ${request.employeeId} are: <br /><br />`;
-        for (let i = 0; i < responseData.Data.length; i++) {
-          if (responseData.Data[i].PersonType === 1) {
-            responseHtml += `<div style="display: block; width: 70%; text-align: right; margin-left: 27%; background-color: #28a06d; color: #fff; padding: 5px; border-radius: 10px 0px 0px 10px; margin-top: 5px; padding-right: 15px;">${
-              responseData.Data[i].Text
-            }</div>`;
-          } else if (responseData.Data[i].PersonType === 4) {
-            responseHtml += `<div style ="text-allign: left; display: block; width: 70%;  text-align: left; background-color: #eb7600; color: #fff; padding: 5px; border-radius: 0px 10px 10px 0px; margin-top: 5px; margin-left: -15px; padding-left: 15px;">${
-              responseData.Data[i].Text
-            }</div>`;
-          } else {
-            responseHtml += `<div style ="text-allign: left; display: block; width: 70%;  text-align: left; background-color: #5f7e7d; color: #fff; padding: 5px; border-radius: 0px 10px 10px 0px; margin-top: 5px; margin-left: -15px; padding-left: 15px;">${
-              responseData.Data[i].Text
-            }</div>`;
+    };
+
+    chatIds.forEach(chatId => {
+      promises.push(getChatMessagesForId(chatId));
+    });
+
+    Promise.all(promises)
+      .then(responseDataFinal => {
+        let responseHtml = `<div class="clearfix"></div>The messages for employeeId ${
+          request.employeeId
+        } are: <br /><br />`;
+        for (let i = 0; i < responseDataFinal.length; i++) {
+          responseHtml += `<div class="chat-block">`;
+          for (let j = 0; j < responseDataFinal[i].length; j++) {
+            let created = new Date(responseDataFinal[i][j].Created);
+            if (responseDataFinal[i][j].PersonType === 1) {
+              responseHtml += `<div class ="personType1">${
+                responseDataFinal[i][j].Text
+              }<div class="created-date">${formatDate(
+                created
+              )}</div></div><div class="clearfix"></div>`;
+            } else if (responseDataFinal[i][j].PersonType === 4) {
+              responseHtml += `<div class ="personType4">${
+                responseDataFinal[i][j].Text
+              }<div class="created-date">${formatDate(
+                created
+              )}</div></div><div class="clearfix"></div>`;
+            } else {
+              responseHtml += `<div class ="pesronType0">${
+                responseDataFinal[i][j].Text
+              }<div class="created-date">${formatDate(
+                created
+              )}</div></div><div class="clearfix"></div>`;
+            }
           }
+          responseHtml += `</div>`;
         }
         sendMessage(callback, responseHtml);
         resolve();
         return;
+      })
+      .catch(err => {
+        sendTechnicalErrorMessage(callback, err);
+        reject();
+        return;
       });
-    });
   });
 };
 
@@ -198,8 +248,8 @@ exports.handler = (event, context, callback) => {
         employeeId: employeeId
       })
     )
-    .then(response =>
-      getChatMessages(callback, { hash: hash, chatId: response.chatId, employeeId: employeeId })
-    )
+    .then(response => {
+      getChatMessages(callback, { hash: hash, chatIds: response, employeeId: employeeId });
+    })
     .catch(err => {});
 };
