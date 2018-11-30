@@ -29,7 +29,10 @@ function handler(event, context, callback) {
       employeeId: employeeId
     }));
     const chatMessages = (await getChatMessages(callback, { hash: hash, chatIds: inactiveChatIds, employeeId: employeeId }));
-  } catch(err) {}
+    sendResponse(callback, chatMessages)
+  } catch(err) {
+    sendResponse(callback, err);
+  }
 }
 
 function formatDate(date) {
@@ -84,13 +87,11 @@ function getFolders(callback, request) {
         try {
           responseData = JSON.parse(responseData);
         } catch (err) {
-          sendResponse(callback);
           reject();
           return;
         }
         let folderID = responseData && responseData.Data && responseData.Data[0] && responseData.Data[0].FolderID;
         if (folderID === undefined) {
-          sendResponse(callback);
           reject();
           return;
         } else {
@@ -113,7 +114,6 @@ function getInactiveChats(callback, request) {
         try {
           responseData = JSON.parse(responseData);
         } catch (err) {
-          sendResponse(callback);
           reject();
           return;
         }
@@ -130,8 +130,7 @@ function getInactiveChats(callback, request) {
           resolve(chats);
           return;
         }
-        sendResponse(callback, 'We could not find any chats with the given employee id: ' + request.employeeId);
-        reject();
+        reject('We could not find any chats with the given employee id: ' + request.employeeId);
         return;
       });
     });
@@ -194,12 +193,10 @@ function getChatMessages(callback, request) {
           }
           responseHtml += `</div>`;
         }
-        sendResponse(callback, responseHtml);
-        resolve();
+        resolve(responseHtml);
         return;
       })
       .catch(err => {
-        sendResponse(callback);
         reject();
         return;
       });
