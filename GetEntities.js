@@ -1,8 +1,8 @@
 let crypto = require('crypto');
 const https = require('https');
 
-const ENTITY_QUERY = 'EMPLOYEECHATS_QUERY';
-const ENTITY = 'EMPLOYEECHATS';
+const EMPLOYEEID_ENTITY = 'EMPLOYEEID';
+const EMPLOYEECHATS_ENTITY = 'EMPLOYEECHATS';
 
 const apiConfig = {
   accountId: '730051643012624573',
@@ -22,15 +22,22 @@ function handler(event, context, callback) {
   try {
     const hash = generateAuthHash();
     const employeeId = getEmployeeId(event);
-    const folderID = (await getFolders(callback, { hash: hash })).folderID;
-    const inactiveChatIds = (await getInactiveChats(callback, {
-      hash: hash,
-      folderID: folderID,
-      employeeId: employeeId
-    }));
-    const chatMessages = (await getChatMessages(callback, { hash: hash, chatIds: inactiveChatIds, employeeId: employeeId }));
-    sendResponse(callback, chatMessages)
-  } catch(err) {
+    if (employeeId === null) {
+      send(callback, 'What is the employee id?');
+      return;
+    }
+    getFolders(callback, { hash: hash })
+      .then(response =>
+        getInactiveChats(callback, {
+          hash: hash,
+          folderID: response.folderID,
+          employeeId: employeeId
+        })
+      )
+      .then(inactiveChatIds => getChatMessages(callback, { hash: hash, chatIds: inactiveChatIds, employeeId: employeeId }))
+      .then(chatMessages => sendResponse(callback, chatMessages))
+      .catch(err => sendResponse(callback, err));
+  } catch (err) {
     sendResponse(callback, err);
   }
 }
@@ -46,9 +53,13 @@ function formatDate(date) {
   return date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + '  ' + strTime;
 }
 
+function send(callback, requiredField) {
+  nano.sendGetEntityResult(callback, null, requiredField);
+}
+
 function sendResponse(callback, message) {
   const chatsQueryEntity = nano.createEntity({
-    kind: ENTITY,
+    kind: EMPLOYEECHATS_ENTITY,
     type: 'text',
     lifecycle: 'statement',
     value: message || 'Technical Error',
@@ -61,7 +72,10 @@ function sendResponse(callback, message) {
 }
 
 function getEmployeeId(event) {
-  let chatDataEntity = nano.getEntity(event, ENTITY_QUERY);
+  let chatDataEntity = nano.getEntity(event, EMPLOYEEID_ENTITY);
+  if (chatDataEntity === null || chatDataEntity === undefined) {
+    return null;
+  }
   let employeeId = nano.getPropertyValue(chatDataEntity.properties, EMPLOYEE_ID);
   return employeeId;
 }
