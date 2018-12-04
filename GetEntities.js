@@ -4,6 +4,13 @@ const https = require('https');
 const EMPLOYEEID_ENTITY = 'EMPLOYEEID';
 const EMPLOYEECHATS_ENTITY = 'EMPLOYEECHATS';
 
+const getSequenceNumber = (function() {
+  let sequenctNumber = 100000000;
+  return function() {
+    return sequenctNumber++;
+  };
+})();
+
 const apiConfig = {
   accountId: '730051643012624573',
   apiSettingId: '724837617263768298',
@@ -35,10 +42,10 @@ function handler(event, context, callback) {
         })
       )
       .then(inactiveChatIds => getChatMessages(callback, { hash: hash, chatIds: inactiveChatIds, employeeId: employeeId }))
-      .then(chatMessages => sendResponse(callback, chatMessages))
-      .catch(err => sendResponse(callback, err));
+      .then(chatMessages => sendResponse(callback, chatMessages,employeeId))
+      .catch(err => sendResponse(callback, err,employeeId));
   } catch (err) {
-    sendResponse(callback, err);
+    sendResponse(callback, err,employeeId);
   }
 }
 
@@ -57,14 +64,16 @@ function send(callback, requiredField) {
   nano.sendGetEntityResult(callback, null, requiredField);
 }
 
-function sendResponse(callback, message) {
+function sendResponse(callback, message,employeeId) {
   const chatsQueryEntity = nano.createEntity({
     kind: EMPLOYEECHATS_ENTITY,
     type: 'text',
     lifecycle: 'statement',
     value: message || 'Technical Error',
     properties: {
-      CHATVALUE: message || 'We are currently facing some technical difficulties. Please try again later.'
+      CHATVALUE: message || 'We are currently facing some technical difficulties. Please try again later.',
+      CHATSEQUENCE: getSequenceNumber(),
+      EMPLOYEEID: employeeId
     }
   });
 
@@ -207,7 +216,7 @@ function getChatMessages(callback, request) {
           }
           responseHtml += `</div>`;
         }
-        resolve(responseHtml);
+        resolve(JSON.stringify(responseDataFinal));
         return;
       })
       .catch(err => {
