@@ -1,5 +1,4 @@
-const ENTITY_QUERY = 'EMPLOYEECHATS_QUERY';
-const ENTITY = 'EMPLOYEECHATS';
+const EMPLOYEEID_ENTITY = 'EMPLOYEEID';
 
 const EMPLOYEE_ID_MATCH = /^\d{3,}$/;
 
@@ -8,34 +7,23 @@ exports.handler = handler;
 function handler(event, context, callback) {
   const employeeId = getEmployeeIdFromTokens(callback, event);
   if (employeeId === undefined) {
-    sendQuestion(callback, 'What is the employee id?');
+    forward(callback);
   } else {
-    forwardRequest(callback, employeeId);
+    forwardEmployeeId(callback, employeeId);
   }
 }
 
-function sendQuestion(callback, message) {
-  const chatsQueryEntity = nano.createEntity({
-    kind: ENTITY,
-    type: 'text',
-    lifecycle: 'statement',
-    value: ENTITY,
-    matchedToken: ENTITY,
-    properties: {
-      CHATVALUE: message
-    }
-  });
-
-  nano.sendLambdaResult(callback, [chatsQueryEntity]);
+function forward(callback) {
+  nano.sendLambdaResult(callback);
 }
 
-function forwardRequest(callback, employeeId) {
+function forwardEmployeeId(callback, employeeId) {
   const chatsQueryEntity = nano.createEntity({
-    kind: ENTITY_QUERY,
+    kind: EMPLOYEEID_ENTITY,
     type: 'text',
     lifecycle: 'statement',
-    value: ENTITY_QUERY,
-    matchedToken: ENTITY_QUERY,
+    value: EMPLOYEEID_ENTITY,
+    matchedToken: EMPLOYEEID_ENTITY,
     properties: {
       EMPLOYEE_ID: employeeId
     }
