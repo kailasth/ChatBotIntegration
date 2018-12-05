@@ -1,0 +1,56 @@
+<div id="[[EMPLOYEECHATS.CHATSEQUENCE]]">
+  <script>
+    setTimeout(() => {
+      function getJsonData() {
+        if ('[[EMPLOYEECHATS.MESSAGETYPE]]' === 'string') {
+          return `[[EMPLOYEECHATS.CHATVALUE]]`;
+        } else {
+          try {
+            return JSON.parse(`[[EMPLOYEECHATS.CHATVALUE]]`);
+          } catch (err) {
+            return `[[EMPLOYEECHATS.CHATVALUE]]`;
+          }
+        }
+      }
+      const responseDataFinal = getJsonData();
+      if (typeof responseDataFinal === 'string') {
+        document.getElementById('[[EMPLOYEECHATS.CHATSEQUENCE]]').innerHTML = responseDataFinal;
+        return;
+      }
+      const employeeId = [[EMPLOYEECHATS.EMPLOYEEID]];
+      function formatDate(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + '  ' + strTime;
+      }
+      let responseHtml = `<p><div class="clearfix"></div>The messages for employeeId ${employeeId} are: <br /><br />`;
+      for (let i = 0; i < responseDataFinal.length; i++) {
+        responseHtml += `<div class="chat-block">`;
+        for (let j = 0; j < responseDataFinal[i].length; j++) {
+          let created = new Date(responseDataFinal[i][j].Created);
+          if (responseDataFinal[i][j].PersonType === 1) {
+            responseHtml += `<div class ="personType1">${responseDataFinal[i][j].Text}<div class="created-date">${formatDate(
+              created
+            )}</div></div><div class="clearfix"></div>`;
+          } else if (responseDataFinal[i][j].PersonType === 4) {
+            responseHtml += `<div class ="personType4">${responseDataFinal[i][j].Text}<div class="created-date">${formatDate(
+              created
+            )}</div></div><div class="clearfix"></div>`;
+          } else {
+            responseHtml += `<div class ="pesronType0">${responseDataFinal[i][j].Text}<div class="created-date">${formatDate(
+              created
+            )}</div></div><div class="clearfix"></div>`;
+          }
+        }
+        responseHtml += `</div>`;
+      }
+      responseHtml += `</p>`;
+      document.getElementById('[[EMPLOYEECHATS.CHATSEQUENCE]]').innerHTML = responseHtml;
+    }, 1);
+  </script>
+</div>
