@@ -1,0 +1,85 @@
+{
+  "entityName": "EMPLOYEECHATS",
+  "modifier": "none",
+  "modifierMandatory": false,
+  "statementId": 48,
+  "topicId": 46,
+  "entities": {
+    "1": {
+      "kind": "$USER",
+      "value": "",
+      "type": "text",
+      "matchedToken": "",
+      "lifecycle": "persistent",
+      "confidence": 1,
+      "public": true,
+      "statementId": 0,
+      "tokenModifier": "none",
+      "tokenRangeSet": false,
+      "tokenRangeStart": -1,
+      "tokenRangeEnd": -1,
+      "properties": [
+        {
+          "name": "FIRSTNAME",
+          "kind": "FIRSTNAME",
+          "value": "",
+          "type": "text"
+        },
+        {
+          "name": "LASTNAME",
+          "kind": "LASTNAME",
+          "value": "",
+          "type": "text"
+        },
+        {
+          "name": "TIMEZONE",
+          "kind": "TIMEZONE",
+          "value": "0",
+          "type": "number"
+        },
+        {
+          "name": "LOCALE",
+          "kind": "LOCALE",
+          "value": "en_US",
+          "type": "text"
+        }
+      ]
+    },
+    "2": {
+      "kind": "$TOUCHPOINT",
+      "value": "API",
+      "type": "text",
+      "matchedToken": "",
+      "lifecycle": "persistent",
+      "confidence": 1,
+      "public": true,
+      "statementId": 0,
+      "tokenModifier": "none",
+      "tokenRangeSet": false,
+      "tokenRangeStart": -1,
+      "tokenRangeEnd": -1
+    },
+    "50": {
+      "kind": "EMPLOYEEID",
+      "value": "EMPLOYEEID",
+      "type": "text",
+      "matchedToken": "EMPLOYEEID",
+      "lifecycle": "singleStatement",
+      "confidence": 1,
+      "public": true,
+      "statementId": 48,
+      "tokenModifier": "none",
+      "tokenRangeSet": true,
+      "tokenRangeStart": 10,
+      "tokenRangeEnd": 10,
+      "properties": [
+        {
+          "name": "EMPLOYEE_ID",
+          "kind": "EMPLOYEE_ID",
+          "value": "1068",
+          "type": "text"
+        }
+      ]
+    }
+  }
+}

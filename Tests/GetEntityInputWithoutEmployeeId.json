@@ -1,0 +1,85 @@
+{
+    "entityName": "EMPLOYEECHATS",
+    "modifier": "none",
+    "modifierMandatory": false,
+    "statementId": 46,
+    "topicId": 46,
+    "entities": {
+        "1": {
+            "kind": "$USER",
+            "value": "",
+            "type": "text",
+            "matchedToken": "",
+            "lifecycle": "persistent",
+            "confidence": 1,
+            "public": true,
+            "statementId": 0,
+            "tokenModifier": "none",
+            "tokenRangeSet": false,
+            "tokenRangeStart": -1,
+            "tokenRangeEnd": -1,
+            "properties": [
+                {
+                    "name": "FIRSTNAME",
+                    "kind": "FIRSTNAME",
+                    "value": "",
+                    "type": "text"
+                },
+                {
+                    "name": "LASTNAME",
+                    "kind": "LASTNAME",
+                    "value": "",
+                    "type": "text"
+                },
+                {
+                    "name": "TIMEZONE",
+                    "kind": "TIMEZONE",
+                    "value": "0",
+                    "type": "number"
+                },
+                {
+                    "name": "LOCALE",
+                    "kind": "LOCALE",
+                    "value": "en_US",
+                    "type": "text"
+                }
+            ]
+        },
+        "2": {
+            "kind": "$TOUCHPOINT",
+            "value": "API",
+            "type": "text",
+            "matchedToken": "",
+            "lifecycle": "persistent",
+            "confidence": 1,
+            "public": true,
+            "statementId": 0,
+            "tokenModifier": "none",
+            "tokenRangeSet": false,
+            "tokenRangeStart": -1,
+            "tokenRangeEnd": -1
+        },
+        "47": {
+            "kind": "OLDCHATS",
+            "value": "OLDCHATS",
+            "type": "text",
+            "matchedToken": "OLDCHATS",
+            "lifecycle": "singleStatement",
+            "confidence": 1,
+            "public": true,
+            "statementId": 46,
+            "tokenModifier": "none",
+            "tokenRangeSet": true,
+            "tokenRangeStart": 0,
+            "tokenRangeEnd": 0,
+            "properties": [
+                {
+                    "name": "CHATVALUE",
+                    "kind": "CHATVALUE",
+                    "value": "What is the chat id?",
+                    "type": "text"
+                }
+            ]
+        }
+    }
+}
