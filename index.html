@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <title>iLink Project Page</title>
+    <meta name="description" content="The HTML5 Herald" />
+    <meta name="author" content="SitePoint" />
+
+    <link rel="stylesheet" href="css/styles.css?v=1.0" />
+  </head>
+
+  <body>
+    <h1>IT Support Landing Page</h1>
+
+    <script>
+      function formatDate(date) {
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        let ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        const strTime = hours + ':' + minutes + ' ' + ampm;
+        return date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + '  ' + strTime;
+      }
+
+      function printHtmlTemplateResponse(employeeId, responseDataFinal) {
+        let responseHtml = `<p><div class="clearfix"></div>The messages for employeeId ${employeeId} are: <br /><br />`;
+        for (let i = 0; i < responseDataFinal.length; i++) {
+          responseHtml += `<div class="chat-block">`;
+          for (let j = 0; j < responseDataFinal[i].length; j++) {
+            let created = new Date(responseDataFinal[i][j].Created);
+            if (responseDataFinal[i][j].PersonType === 1) {
+              responseHtml += `<div class ="personType1">${responseDataFinal[i][j].Text}<div class="created-date">${formatDate(
+                created
+              )}</div></div><div class="clearfix"></div>`;
+            } else if (responseDataFinal[i][j].PersonType === 4) {
+              responseHtml += `<div class ="personType4">${responseDataFinal[i][j].Text}<div class="created-date">${formatDate(
+                created
+              )}</div></div><div class="clearfix"></div>`;
+            } else {
+              responseHtml += `<div class ="pesronType0">${responseDataFinal[i][j].Text}<div class="created-date">${formatDate(
+                created
+              )}</div></div><div class="clearfix"></div>`;
+            }
+          }
+          responseHtml += `</div>`;
+        }
+        responseHtml += `</p>`;
+        return responseHtml;
+      }
+    </script>
+
+    <script>
+      !(function(t, e, o, c, n, a) {
+        var s = (window.nanorep = window.nanorep || {});
+        (s = s[e] = s[e] || {}),
+          (s.apiHost = a),
+          (s.host = n),
+          (s.path = c),
+          (s.account = t),
+          (s.protocol = 'https:' === location.protocol ? 'https:' : 'http:'),
+          (s.on =
+            s.on ||
+            function() {
+              (s._calls = s._calls || []), s._calls.push([].slice.call(arguments));
+            });
+        var p = s.protocol + '//' + n + c + o + '?account=' + t,
+          l = document.createElement('script');
+        (l.async = l.defer = !0), l.setAttribute('src', p), document.getElementsByTagName('head')[0].appendChild(l);
+      })('chrisgdemo', 'floatingWidget', 'floating-widget.js', '/web/', 'chrisgdemo.nanorep.co');
+    </script>
+
+    <script>
+      nanorep.floatingWidget.on({
+        init: function() {
+          this.setConfigId('910201532');
+          this.setKB('910200362');
+          this.preprocessBotResponse(function(response) {
+            const indexes = [];
+            for (let x in response.entities) {
+              indexes.push(x);
+            }
+            if (indexes.length && response.entities[Math.max(...indexes)].kind === 'EMPLOYEECHATS') {
+              const properties = response.entities[Math.max(...indexes)].properties;
+              const messageType = properties.find(property => property.kind === 'MESSAGETYPE');
+              const chatValue = properties.find(property => property.kind === 'CHATVALUE');
+              const chatSequence = properties.find(property => property.kind === 'CHATSEQUENCE');
+              const EmployeeId = properties.find(property => property.kind === 'EMPLOYEEID');
+              if (messageType) {
+                if (messageType.value === 'json') {
+                  response.text = printHtmlTemplateResponse(EmployeeId.value, JSON.parse(chatValue.value));
+                } else if (messageType.value === 'string') {
+                  response.text = chatValue.value;
+                }
+              }
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
