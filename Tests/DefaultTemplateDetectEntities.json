@@ -1,0 +1,68 @@
+{
+    "entities": {
+        "1": {
+            "kind": "$USER",
+            "value": "",
+            "type": "text",
+            "matchedToken": "",
+            "lifecycle": "persistent",
+            "confidence": 1,
+            "public": true,
+            "statementId": 0,
+            "tokenModifier": "none",
+            "tokenRangeSet": false,
+            "tokenRangeStart": -1,
+            "tokenRangeEnd": -1,
+            "properties": [
+                {
+                    "name": "FIRSTNAME",
+                    "kind": "FIRSTNAME",
+                    "value": "",
+                    "type": "text"
+                },
+                {
+                    "name": "LASTNAME",
+                    "kind": "LASTNAME",
+                    "value": "",
+                    "type": "text"
+                }
+            ]
+        }
+    },
+    "statementId": 3,
+    "topicId": 0,
+    "tokens": [
+        {
+            "word": "weather",
+            "posTag": "UNKNOWN",
+            "isRecognized": true,
+            "modifier": "none",
+            "stems": [],
+            "entities": []
+        },
+        {
+            "word": "in",
+            "posTag": "to",
+            "isRecognized": true,
+            "modifier": "from_to_literal",
+            "stems": [],
+            "entities": []
+        },
+        {
+            "word": "London",
+            "posTag": "UNKNOWN",
+            "isRecognized": true,
+            "modifier": "toToken",
+            "stems": [],
+            "entities": [
+                {
+                    "id": "5",
+                    "kind": "DESTINATION",
+                    "continuesEntityFromPreviousToken": false
+                }
+            ]
+        }
+    ],
+    "mode": "statement",
+    "impliedEntities": {}
+}

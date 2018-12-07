@@ -1,0 +1,46 @@
+{
+    "entities": {
+        "1": {
+            "kind": "$USER",
+            "value": "",
+            "type": "text",
+            "matchedToken": "",
+            "lifecycle": "persistent",
+            "confidence": 1,
+            "public": true,
+            "statementId": 0,
+            "tokenModifier": "none",
+            "tokenRangeSet": false,
+            "tokenRangeStart": -1,
+            "tokenRangeEnd": -1,
+            "properties": [
+                {
+                    "name": "FIRSTNAME",
+                    "kind": "FIRSTNAME",
+                    "value": "",
+                    "type": "text"
+                },
+                {
+                    "name": "LASTNAME",
+                    "kind": "LASTNAME",
+                    "value": "",
+                    "type": "text"
+                }
+            ]
+        }
+    },
+    "statementId": 3,
+    "topicId": 15,
+    "tokens": [
+        {
+            "word": "1068",
+            "posTag": "UNKNOWN",
+            "isRecognized": true,
+            "modifier": "none",
+            "stems": [],
+            "entities": []
+        }
+    ],
+    "mode": "statement",
+    "impliedEntities": {}
+}

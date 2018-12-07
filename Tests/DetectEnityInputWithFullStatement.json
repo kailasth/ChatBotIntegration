@@ -1,0 +1,126 @@
+{
+    "entities": {
+        "1": {
+            "kind": "$USER",
+            "value": "",
+            "type": "text",
+            "matchedToken": "",
+            "lifecycle": "persistent",
+            "confidence": 1,
+            "public": true,
+            "statementId": 0,
+            "tokenModifier": "none",
+            "tokenRangeSet": false,
+            "tokenRangeStart": -1,
+            "tokenRangeEnd": -1,
+            "properties": [
+                {
+                    "name": "FIRSTNAME",
+                    "kind": "FIRSTNAME",
+                    "value": "",
+                    "type": "text"
+                },
+                {
+                    "name": "LASTNAME",
+                    "kind": "LASTNAME",
+                    "value": "",
+                    "type": "text"
+                }
+            ]
+        }
+    },
+    "statementId": 3,
+    "topicId": 15,
+    "tokens": [
+        {
+            "word": "I",
+            "posTag": "UNKNOWN",
+            "isRecognized": true,
+            "modifier": "none",
+            "stems": [],
+            "entities": []
+        },
+        {
+            "word": "would",
+            "posTag": "UNKNOWN",
+            "isRecognized": true,
+            "modifier": "none",
+            "stems": [],
+            "entities": []
+        },
+        {
+            "word": "like",
+            "posTag": "UNKNOWN",
+            "isRecognized": true,
+            "modifier": "none",
+            "stems": [],
+            "entities": []
+        },
+        {
+            "word": "to",
+            "posTag": "UNKNOWN",
+            "isRecognized": true,
+            "modifier": "none",
+            "stems": [],
+            "entities": []
+        },
+        {
+            "word": "find",
+            "posTag": "UNKNOWN",
+            "isRecognized": true,
+            "modifier": "none",
+            "stems": [],
+            "entities": []
+        },
+        {
+            "word": "agent",
+            "posTag": "UNKNOWN",
+            "isRecognized": true,
+            "modifier": "none",
+            "stems": [],
+            "entities": []
+        },
+        {
+            "word": "interactions",
+            "posTag": "UNKNOWN",
+            "isRecognized": true,
+            "modifier": "none",
+            "stems": [],
+            "entities": []
+        },
+        {
+            "word": "for",
+            "posTag": "UNKNOWN",
+            "isRecognized": true,
+            "modifier": "none",
+            "stems": [],
+            "entities": []
+        },
+        {
+            "word": "employee",
+            "posTag": "UNKNOWN",
+            "isRecognized": true,
+            "modifier": "none",
+            "stems": [],
+            "entities": []
+        },
+        {
+            "word": "id",
+            "posTag": "UNKNOWN",
+            "isRecognized": true,
+            "modifier": "none",
+            "stems": [],
+            "entities": []
+        },
+        {
+            "word": "1068",
+            "posTag": "UNKNOWN",
+            "isRecognized": true,
+            "modifier": "none",
+            "stems": [],
+            "entities": []
+        }
+    ],
+    "mode": "statement",
+    "impliedEntities": {}
+}
