@@ -41,9 +41,11 @@ function handler(event, context, callback) {
           employeeId: employeeId
         })
       )
-      .then(inactiveChatIds => getChatMessages({ hash: hash, chatIds: inactiveChatIds, employeeId: employeeId }))
-      .then(chatMessages => sendResponse(callback, chatMessages, employeeId, 'json'))
+      .then(inactiveChatIds => sendChatListResponse(callback, inactiveChatIds))
       .catch(err => sendResponse(callback, err, employeeId, 'string'));
+    /* .then(inactiveChatIds => getChatMessages({ hash: hash, chatIds: inactiveChatIds, employeeId: employeeId }))
+      .then(chatMessages => sendResponse(callback, chatMessages, employeeId, 'json'))
+      .catch(err => sendResponse(callback, err, employeeId, 'string')); */
   } catch (err) {
     sendResponse(callback, err, employeeId, 'string');
   }
@@ -67,6 +69,26 @@ function sendResponse(callback, message, employeeId, type) {
     }
   });
   nano.sendGetEntityResult(callback, [chatsQueryEntity]);
+}
+
+function sendChatListResponse(callback, chatIds) {
+  const properties = [];
+  chatIds &&
+    chatIds.forEach(chatId => {
+      properties.push({
+        kind: 'statement',
+        value: 'i would like to find old chats for id ' + chatId,
+        type: 'text',
+        name: chatId
+      });
+    });
+  const chatsQueryEntity = nano.createEntity({
+    type: 'quickOption',
+    lifecycle: 'statement',
+    value: 'Click on proceed to start filling the questionnaire.',
+    properties
+  });
+  nano.sendGetEntityResult(callback, [chatsQueryEntity], "Choose one of the below chat id's:");
 }
 
 function getEmployeeId(event) {
